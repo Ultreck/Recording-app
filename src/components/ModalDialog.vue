@@ -13,31 +13,83 @@
           </select>
         </div>
         <div id="toggle">
-            <ToggleComponent :toggleProps="toggles" @update:toggles="updateToggles"/>
+          <ToggleComponent :toggleProps="toggles" @update:toggles="updateToggles" />
         </div>
         <div id="button">
-            <router-link to="/live">
-                <button>
-                    Start Recording
-                </button>
-                </router-link>
+          <!-- <router-link to="/live"> -->
+            <button @click="goToRoute">Start Recording</button>
+          <!-- </router-link> -->
         </div>
       </div>
     </div>
+    <!-- <video v-if="stream" ref="videoElement" autoplay muted></video> -->
   </div>
 </template>
 
 <script setup>
 import { ref } from 'vue'
 import ToggleComponent from './ToggleComponent.vue'
-const toggles = ref([{ isActive: false, name:"Record screen" }, { isActive: false, name:"Record camera" }, { isActive: false, name:"Record mic" }]);
+import { defineProps } from 'vue';
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
+
+const awaitingPermission = ref(false);
+const recordScreen = ref(false);
+const recordCamera = ref(false);
+const recordMic = ref(false);
+
+
+const toggles = ref([
+    { isActive: false, name: 'Record screen' },
+    { isActive: false, name: 'Record camera' },
+    { isActive: false, name: 'Record mic' }
+])
 const updateToggles = (updatedToggles) => {
-  toggles.value = updatedToggles;
+    toggles.value = updatedToggles
+}
+
+
+const { isModalOpen, closeModal } = defineProps(['isModalOpen', 'closeModal']);
+
+
+
+
+const goToRoute = () => {
+    requestPermissions();
+  if (awaitingPermission.value == true) {
+      router.push('/live');
+  }
 };
 
-  import { defineProps } from 'vue';
+const requestPermissions = async () => {
+  try {
+    awaitingPermission.value = true;
+    const stream = await navigator.mediaDevices.getUserMedia({
+      video: recordScreen.value,
+      audio: recordMic.value,
+    });
+    // User granted permissions, proceed with recording
+    startRecordingPhase();
+    const videoElement = ref('videoElement');
+      videoElement.value.srcObject = stream;
+  } catch (error) {
+    // User denied permissions or an error occurred
+    awaitingPermission.value = false;
+    console.error('Permission denied or error:', error);
+  }
+};
 
-  const { isModalOpen, closeModal } = defineProps(['isModalOpen', 'closeModal']);
+const startRecordingPhase = () => {
+  // Implement your recording logic here
+  console.log('Recording started with options:', {
+    recordScreen: recordScreen.value,
+    recordCamera: recordCamera.value,
+    recordMic: recordMic.value,
+  });
+  // Reset modal and permission state
+  awaitingPermission.value = false;
+};
 </script>
 
 <style lang="less" scoped>
@@ -72,25 +124,25 @@ const updateToggles = (updatedToggles) => {
     }
     #content {
       padding: 10px 40px;
-      #heading{
+      #heading {
         font-size: 16px;
         font-weight: 600;
-        color: rgba(2, 2, 50, .7);
+        color: rgba(2, 2, 50, 0.7);
       }
-      #button{
+      #button {
         text-align: center;
-        button{
-            background-color: rgba(6, 133, 196, 0.7);
-            color: white;
-            border: none;
-            padding: 15px 70px;
-            border-radius: 50px;
-            margin: 15px 0;
-            font-weight: 600;
-            font-size: 15px;
+        button {
+          background-color: rgba(6, 133, 196, 0.7);
+          color: white;
+          border: none;
+          padding: 15px 70px;
+          border-radius: 50px;
+          margin: 15px 0;
+          font-weight: 600;
+          font-size: 15px;
         }
       }
-      #input{
+      #input {
         width: 100%;
         border: 1px solid rgb(231, 231, 231);
         padding: 10px 30px;
@@ -98,11 +150,11 @@ const updateToggles = (updatedToggles) => {
         background-color: rgb(248, 247, 247);
         border-radius: 8px;
         margin-top: 10px;
-        #options{
-            background-color: rgb(248, 247, 247);
-            width: 100%;
-            border: none;
-            outline: none;
+        #options {
+          background-color: rgb(248, 247, 247);
+          width: 100%;
+          border: none;
+          outline: none;
         }
       }
     }

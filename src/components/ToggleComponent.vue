@@ -4,7 +4,7 @@
       <div id="row">
         <div id="item">{{ toggle.name }}</div>
         <div id="toggle" v-if="!toggle.isActive">
-          <button id="btn" :class="{ active: toggle.isActive }" @click="toggleState(index)">
+          <button @change="updateValue" id="btn" :class="{ active: toggle.isActive }" @click="toggleState(index)">
             <span v-if="toggle.isActive">&#10003;</span>
             <span id="close" v-else></span>
           </button>
@@ -24,21 +24,27 @@
 import { ref, defineProps, getCurrentInstance } from 'vue'
 
 const props = defineProps(['toggleProps'])
-const toggles = ref(props.toggleProps)
+const toggles = ref(props.toggleProps);
+
+const item = ref({});
+const updateValue = () => {
+  item.value = !item.value;
+};
 
 const toggleState = (index) => {
   toggles.value[index].isActive = !toggles.value[index].isActive
   emitUpdatedToggles()
 }
-
+const instance = getCurrentInstance();
 const emitUpdatedToggles = () => {
-  const { emit } = getCurrentInstance()
+  const { emit } = instance;
   emit('update:toggles', toggles.value)
 }
 // const isAnyToggleActive = computed(() => {
 //   // Check if any toggle is active
 //   return toggles.value.some((toggle) => toggle.isActive)
 // })
+
 </script>
 
 <style lang="less" scoped>
