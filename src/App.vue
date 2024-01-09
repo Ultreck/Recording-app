@@ -1,19 +1,12 @@
-<script setup>
-import HeaderNav from './components/HeaderNav.vue';
-import RecordLists from './components/RecordLists.vue';
-import SideNavBar from './components/SideNavBar.vue';
-
-// import HelloWorld from './components/HelloWorld.vue'
-// import TheWelcome from './components/TheWelcome.vue'
+<script >
+export default {
+  name: 'App'
+};
 </script>
 
 <template>
-  <div id="container">
-    <HeaderNav/>
-    <main id="parent">
-      <SideNavBar/>
-      <RecordLists/>
-    </main>
+  <div id="app">
+    <router-view/>
   </div>
   </template>
 

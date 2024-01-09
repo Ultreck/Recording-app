@@ -7,7 +7,8 @@
       <span id="brandName">Adilo</span>
     </div>
     <ul v-for="item in navItems" :key="item.id">
-      <li>{{ item }}</li>
+      <li id="active" v-if="item.active">{{ item.item }} <img :src="arrow" alt=""></li>
+      <li id="notactive" v-else>{{ item.item }}</li>
     </ul>
     <div id="support">
       <div id="help">Help</div>
@@ -25,11 +26,11 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-
+import arrow from '@/assets/arrow.svg'
 const navItems = ref([])
 import profile from '@/assets/profile.png'
 const fetchNavItems = () => {
-  navItems.value = ['Projects', 'Tools & App', 'Channels', 'Contacts', 'Analytics', 'Settings']
+  navItems.value = [{item:'Projects', active: false}, {item:'Tools & App', active: true}, {item:'Channels', active: false}, {item:'Contacts', active: false}, {item:'Analytics', active: false}, {item:'Settings', active: false}, ]
 }
 
 onMounted(() => {
@@ -43,15 +44,25 @@ onMounted(() => {
   display: flex;
   justify-content: space-around;
   align-items: center;
-  padding: 1% 2%;
+  padding: 0 6% 0 1%;
   border-bottom: 1px solid rgb(218, 216, 216);
 }
-li {
+#notactive {
   color: rgb(160, 160, 160);
   list-style-type: none;
   display: flex;
   font-weight: 700;
-  font-size: 19px;
+  font-size: 18px;
+  padding: 10px 0;
+}
+#active {
+  padding:n 10px 0;
+  color: rgba(12, 6, 46, 0.8);
+  list-style-type: none;
+  display: flex;
+  font-weight: 700;
+  font-size: 18px;
+  border-top: 4px solid rgba(6, 133, 196, 0.7);
 }
 #brand {
   display: flex;
@@ -92,7 +103,7 @@ li {
   }
   #vertical-line {
     border-left: 2px solid #ccc;
-    height: 35px;
+    height: 45px;
     margin: 20px;
   }
   #profile {
@@ -103,9 +114,9 @@ li {
         font-size: 18px;
     }
     #email{
-        color: rgb(185, 185, 185);
-        font-weight: 500;
-        font-size: 14px;
+        color: rgb(168, 167, 167);
+        font-weight: 600;
+        font-size: 12px;
 
     }
     #profile-picture {

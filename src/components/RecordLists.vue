@@ -1,7 +1,7 @@
 <template>
   <!-- <h1>Video Recording Application</h1> -->
   <div id="app">
-    <HeaderComponent/>
+    <HeaderComponent :triggerCallback="triggerCallback"/>
     <table class="custom-table">
       <thead id="">
         <tr>
@@ -17,7 +17,7 @@
           <td id="imgContainer">
             <img :src="video.imageSrc" alt="" id="imgSrc" />
             <span id="lapse">{{ video.lapseTime }}</span>
-        </td>
+          </td>
           <td id="title-container">
             <h3>{{ video.title }}</h3>
             <p>{{ video.description }}</p>
@@ -25,6 +25,9 @@
           <td>{{ video.view }}</td>
           <td>{{ video.size }}</td>
           <td>{{ video.modified }}</td>
+          <td>
+            <img :src="threeDots" alt="" id="dots" />
+          </td>
         </tr>
       </tbody>
     </table>
@@ -38,10 +41,23 @@ import img2 from '@/assets/rec2.jpg'
 import img3 from '@/assets/rec3.jpg'
 import img4 from '@/assets/rec4.jpeg'
 import img5 from '@/assets/rec5.png'
+import threeDots from '@/assets/3dots.png'
 import HeaderComponent from './HeaderComponent.vue'
 
-const videos = ref([])
 
+
+const props = defineProps(['openModalFunction']);
+
+const triggerCallback = () => {
+  // Check if openModalFunction is a function before calling it
+  if (typeof props.openModalFunction === 'function') {
+    props.openModalFunction();
+  } else {
+    console.error('openModalFunction is not a function');
+  }
+};
+
+const videos = ref([])
 const fetchVideos = () => {
 
   videos.value = [
@@ -138,7 +154,10 @@ onMounted(() => {
       text-align: left;
       font-weight: 600;
     //   color: darken(@primary-color, 20%);
-    color: @primary-color;
+     color: @primary-color;
+     #dots{
+      width: 30px;
+     }
     }
     th {
         font-weight: 700;
